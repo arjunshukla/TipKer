@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     
     
     // MARK: Actions
-    @IBAction func calculateTip(sender: AnyObject) {
+    @IBAction func calculateTip(_ sender: AnyObject) {
         
         
         let bill = Double(txtBillAmount.text!) ?? 0
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
         // Optionally initialize the property to a desired starting value
         lblTotalAmount.alpha = 0
         lblTipAmount.alpha = 0
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animate(withDuration: 0.4, animations: {
             self.lblTotalAmount.alpha = 1
             self.lblTipAmount.alpha = 1
         })
@@ -47,23 +47,31 @@ class ViewController: UIViewController {
     }
     
     // MARK: Tap Gesture Action
-    @IBAction func onTap(sender: AnyObject) {
+    @IBAction func onTap(_ sender: AnyObject) {
         view.endEditing(true)
     }
     
     
     // MARK: View Life Cycle methods
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         txtBillAmount.becomeFirstResponder()
         
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         
-        let defaultTip = defaults.doubleForKey("defaultTip")
+        let defaultTip = defaults.double(forKey: "defaultTip")
        
         arrTipPercentages[3] = defaultTip
         lblDefaultTip.text = String(format: "Default Tip percentage:      %.2f", defaultTip)
         calculateTip(self)
+        
+        if defaults.bool(forKey: "shouldApplyTheme") {
+            self.view.backgroundColor = UIColor.orange
+            self.navigationController?.navigationBar.barTintColor = UIColor.orange
+        } else {
+            self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
+            self.view.backgroundColor = UIColor.white
+        }
     }
 }
 

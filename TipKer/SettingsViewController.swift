@@ -16,31 +16,63 @@ class SettingsViewController: UIViewController {
     // MARK: Outlets
     @IBOutlet weak var txtDefaultTip: UITextField!
     
+    @IBOutlet weak var swithTheme: UISwitch!
     
     // MARK: Actions
-    @IBAction func onSaveBtnTap(sender: AnyObject) {
+    @IBAction func onSaveBtnTap(_ sender: AnyObject) {
         
         let defaultTip = Double(txtDefaultTip.text!) ?? 0
         
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         
-        defaults.setDouble(defaultTip, forKey: "defaultTip")
+        defaults.set(defaultTip, forKey: "defaultTip")
         
         defaults.synchronize()
         view.endEditing(true)
         
     }
     
-    override func viewWillAppear(animated: Bool) {
-        txtDefaultTip.becomeFirstResponder()
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
-        let defaultTip = defaults.doubleForKey("defaultTip")
-        
-        txtDefaultTip.text = String(format: "%.2f", defaultTip)
+    @IBAction func changeTheme(_ sender: AnyObject) {
+        if swithTheme.isOn {
+            self.navigationController?.navigationBar.barTintColor = UIColor.orange
+            self.view.backgroundColor = UIColor.orange
+            let defaults = UserDefaults.standard
+            
+            defaults.set(true, forKey: "shouldApplyTheme")
+            
+            defaults.synchronize()
+            
+        } else {
+        self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
+            self.view.backgroundColor = UIColor.white
+            let defaults = UserDefaults.standard
+            
+            defaults.set(false, forKey: "shouldApplyTheme")
+            
+            defaults.synchronize()
+        }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    // MARK: View Life Cycle methods
+    override func viewWillAppear(_ animated: Bool) {
+        txtDefaultTip.becomeFirstResponder()
+        let defaults = UserDefaults.standard
+        
+        let defaultTip = defaults.double(forKey: "defaultTip")
+        
+        txtDefaultTip.text = String(format: "%.2f", defaultTip)
+        
+        if defaults.bool(forKey: "shouldApplyTheme") {
+            swithTheme.setOn(true, animated: false)
+            self.view.backgroundColor = UIColor.orange
+            self.navigationController?.navigationBar.barTintColor = UIColor.orange
+        } else {
+            self.navigationController?.navigationBar.barTintColor = UIColor.groupTableViewBackground
+            self.view.backgroundColor = UIColor.white
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
